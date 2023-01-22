@@ -98,7 +98,7 @@ const MinionTypes = {
 const Home: NextPage = () => {
   const [name, setName] = useState("");
   const [showHero, setShowHero] = useState(true);
-  const [minionTypes, setMinionTypes] = useState<number[] | null>(null);
+  const [minionTypes, setMinionTypes] = useState<number[] | undefined>(undefined);
   const tiersFiltered = useMemo(() => {
     if (showHero) {
       return tiers;
