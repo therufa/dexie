@@ -5,3 +5,4 @@
 ++ fix jsonb based card props
 -- create modal with card details
 -- style this shit
+-- add filter for multi-type minions

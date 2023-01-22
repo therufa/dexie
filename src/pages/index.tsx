@@ -62,7 +62,7 @@ const Section = ({
   return (
     <section className="m-2 md:m-5">
       <h2 className="bg-zinc-200 p-2 text-xl uppercase leading-10">{title}</h2>
-      <ul className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
+      <ul className="grid grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8">
         {cardQuery.data?.map((card) => (
           <Card key={card.id} card={card} />
         ))}
