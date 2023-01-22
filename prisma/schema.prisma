@@ -6,12 +6,38 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "postgresql"
     url      = env("DATABASE_URL")
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+model Card {
+    id            Int      @id @default(autoincrement())
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    collectible   Boolean
+    slug          String   @db.Text
+    classId       Int
+    multiClassIds Int[]
+    minionTypeId  Int?
+    cardTypeId    Int
+    cardSetId     Int
+    rarityId      Int?
+    artistName    String?
+    health        Int
+    attack        Int
+    manaCost      Int
+    name          Json     @db.JsonB
+    text          Json     @db.JsonB
+    image         Json     @db.JsonB
+    imageGold     Json     @db.JsonB
+    flavorText    Json     @db.JsonB
+    cropImage     String
+    parentId      Int
+    childIds      Int[]
+    tier          Int?
+    hero          Boolean  @default(false)
+    quest         Boolean  @default(false)
+    reward        Boolean  @default(false)
+    upgradeId     Int?
+    companionId   Int?
 }

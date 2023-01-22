@@ -14,11 +14,12 @@ const Card = ({ card }: { card: CardProp }) => {
     <li>
       <Image
         src={card.image.en_US}
-        alt={card.text.en_US}
+        alt={card.text?.en_US ?? ''}
         width={200}
-        height={200}
+        height={276.56}
       />
       <span>{card.name.en_US}</span>
+      <span>{card.battlegrounds.tier}</span>
     </li>
   );
 }
@@ -36,7 +37,7 @@ const Home: NextPage = () => {
       </Head>
       <main className="">
         <input value={name} onChange={(e) => setName(e.target.value)} />
-        <ul>
+        <ul className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {cards.data?.map((card) => (<Card key={card.id} card={card} />))}
         </ul>
       </main>
