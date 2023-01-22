@@ -7,6 +7,7 @@ export const cardRouter = createTRPCRouter({
       name: z.string().nullable(),
       hero: z.boolean().default(false),
       tier: z.number().nullable().default(null),
+      minionTypes: z.array(z.number()).nullable().default(null),
     }))
     .query(({ ctx, input }) => {
       const name = input.name ? {
@@ -20,6 +21,9 @@ export const cardRouter = createTRPCRouter({
           name,
           hero: input.hero,
           tier: input.tier,
+          minionTypeId: input.minionTypes?.length
+            ? { in: [0, ...input.minionTypes] }
+            : undefined
         }
       })
     }),

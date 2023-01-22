@@ -5,18 +5,29 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 
 import { api } from "../utils/api";
-import type { CardRouter } from '../server/api/routers/card';
+import type { CardRouter } from "../server/api/routers/card";
 
-type LangKey = 'en_US' | 'ja_JP' | 'de_DE' | 'fr_FR' | 'es_ES' | 'it_IT' | 'pt_PT' | 'ru_RU' | 'ko_KR' | 'zh_TW' | 'zh_CN';
-type Cards = inferRouterOutputs<CardRouter>['filter'];
+type LangKey =
+  | "en_US"
+  | "ja_JP"
+  | "de_DE"
+  | "fr_FR"
+  | "es_ES"
+  | "it_IT"
+  | "pt_PT"
+  | "ru_RU"
+  | "ko_KR"
+  | "zh_TW"
+  | "zh_CN";
+type Cards = inferRouterOutputs<CardRouter>["filter"];
 type Card = Cards[0] & {
-  image: Record<LangKey, string>
-  name: Record<LangKey, string>
+  image: Record<LangKey, string>;
+  name: Record<LangKey, string>;
 };
 
 const Card = ({ card }: { card: Card }) => {
   return (
-    <li className="hover:bg-slate-200 flex flex-col items-center">
+    <li className="flex flex-col items-center hover:bg-slate-200">
       <Image
         src={card.image.en_US}
         alt={card.slug}
@@ -26,15 +37,22 @@ const Card = ({ card }: { card: Card }) => {
       <span>{card.name.en_US}</span>
     </li>
   );
-}
+};
 
 type SectionFilter = {
   name: string;
   hero?: boolean;
   tier?: number;
-}
+  minionTypes?: number[];
+};
 
-const Section = ({ title, filter }: { title: string, filter: SectionFilter }) => {
+const Section = ({
+  title,
+  filter,
+}: {
+  title: string;
+  filter: SectionFilter;
+}) => {
   const cardQuery = api.card.filter.useQuery<unknown, Card[]>(filter);
 
   if (cardQuery.data === undefined || cardQuery.data.length === 0) {
@@ -43,27 +61,44 @@ const Section = ({ title, filter }: { title: string, filter: SectionFilter }) =>
 
   return (
     <section className="m-2 md:m-5">
-      <h2 className="text-xl uppercase leading-10 p-2 bg-zinc-200">{title}</h2>
-      <ul className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {cardQuery.data?.map((card) => (<Card key={card.id} card={card} />))}
+      <h2 className="bg-zinc-200 p-2 text-xl uppercase leading-10">{title}</h2>
+      <ul className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-6">
+        {cardQuery.data?.map((card) => (
+          <Card key={card.id} card={card} />
+        ))}
       </ul>
     </section>
   );
 };
 
 const tiers = [
-  { title: 'Hero', filter: { hero: true }},
-  { title: 'tier 1', filter: { tier: 1 }},
-  { title: 'tier 2', filter: { tier: 2 }},
-  { title: 'tier 3', filter: { tier: 3 }},
-  { title: 'tier 4', filter: { tier: 4 }},
-  { title: 'tier 5', filter: { tier: 5 }},
-  { title: 'tier 6', filter: { tier: 6 }},
-]
+  { title: "Hero", filter: { hero: true } },
+  { title: "tier 1", filter: { tier: 1 } },
+  { title: "tier 2", filter: { tier: 2 } },
+  { title: "tier 3", filter: { tier: 3 } },
+  { title: "tier 4", filter: { tier: 4 } },
+  { title: "tier 5", filter: { tier: 5 } },
+  { title: "tier 6", filter: { tier: 6 } },
+];
+
+const MinionTypes = {
+  NoType: 0,
+  Beast: 20,
+  Demon: 15,
+  Dragon: 24,
+  Elemental: 18,
+  Mech: 17,
+  Murloc: 14,
+  Naga: 92,
+  Pirate: 23,
+  Quillboar: 43,
+  Undead: 11,
+} as const;
 
 const Home: NextPage = () => {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [showHero, setShowHero] = useState(true);
+  const [minionTypes, setMinionTypes] = useState<number[] | null>(null);
   const tiersFiltered = useMemo(() => {
     if (showHero) {
       return tiers;
@@ -71,6 +106,14 @@ const Home: NextPage = () => {
 
     return tiers.filter((tier) => tier.filter.hero !== true);
   }, [showHero]);
+
+  function updateMinionTypes(type: number) {
+    if (minionTypes?.includes(type)) {
+      setMinionTypes(minionTypes.filter((t) => t !== type));
+    } else {
+      setMinionTypes([...(minionTypes ?? []), type]);
+    }
+  }
 
   return (
     <>
@@ -81,12 +124,31 @@ const Home: NextPage = () => {
       </Head>
       <main className="">
         <input value={name} onChange={(e) => setName(e.target.value)} />
-        <input checked={showHero} onChange={(e) => setShowHero(e.target.checked)} type="checkbox" />
+        <label>
+          <input
+            checked={showHero}
+            onChange={(e) => setShowHero(e.target.checked)}
+            type="checkbox"
+          />
+          Hero
+        </label>
+        {Object.entries(MinionTypes).map(([key, value]) => (
+          <label key={key}>
+            <input
+              checked={minionTypes?.includes(value) ?? false}
+              onChange={() => updateMinionTypes(value)}
+              type="checkbox"
+            />
+            {key}
+          </label>
+        ))}
 
-        {tiersFiltered.map(({ title, filter }) => (<Section
-          key={title}
-          title={title}
-          filter={{ name, ...filter }} />
+        {tiersFiltered.map(({ title, filter }) => (
+          <Section
+            key={title}
+            title={title}
+            filter={{ name, ...filter, minionTypes }}
+          />
         ))}
       </main>
     </>
