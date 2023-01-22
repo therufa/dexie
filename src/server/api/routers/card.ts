@@ -17,7 +17,8 @@ export const cardRouter = createTRPCRouter({
       return cards;
     }),
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.example.findMany();
+    // return ctx.prisma.card.findMany();
+    return ctx.prisma.card.findMany();
   }),
 });
 
