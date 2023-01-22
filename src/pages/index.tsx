@@ -16,7 +16,7 @@ type Card = Cards[0] & {
 
 const Card = ({ card }: { card: Card }) => {
   return (
-    <li>
+    <li className="hover:bg-slate-200 flex flex-col items-center">
       <Image
         src={card.image.en_US}
         alt={card.slug}
@@ -24,14 +24,45 @@ const Card = ({ card }: { card: Card }) => {
         height={276.56}
       />
       <span>{card.name.en_US}</span>
-      <span>{card.tier}</span>
     </li>
   );
 }
 
+type SectionFilter = {
+  name: string;
+  hero?: boolean;
+  tier?: number;
+}
+
+const Section = ({ title, filter }: { title: string, filter: SectionFilter }) => {
+  const cardQuery = api.card.filter.useQuery<unknown, Card[]>(filter);
+
+  if (cardQuery.data === undefined || cardQuery.data.length === 0) {
+    return null;
+  }
+
+  return (
+    <section className="m-2 md:m-5">
+      <h2 className="text-xl uppercase leading-10 p-2 bg-zinc-200">{title}</h2>
+      <ul className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        {cardQuery.data?.map((card) => (<Card key={card.id} card={card} />))}
+      </ul>
+    </section>
+  );
+};
+
+const tiers = [
+  { title: 'Hero', filter: { hero: true }},
+  { title: 'tier 1', filter: { tier: 1 }},
+  { title: 'tier 2', filter: { tier: 2 }},
+  { title: 'tier 3', filter: { tier: 3 }},
+  { title: 'tier 4', filter: { tier: 4 }},
+  { title: 'tier 5', filter: { tier: 5 }},
+  { title: 'tier 6', filter: { tier: 6 }},
+]
+
 const Home: NextPage = () => {
   const [name, setName] = useState('');
-  const cardQuery = api.card.filter.useQuery<unknown, Card[]>({ name });
 
   return (
     <>
@@ -42,9 +73,11 @@ const Home: NextPage = () => {
       </Head>
       <main className="">
         <input value={name} onChange={(e) => setName(e.target.value)} />
-        <ul className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {cardQuery.data?.map((card) => (<Card key={card.id} card={card} />))}
-        </ul>
+        {tiers.map(({ title, filter }) => (<Section
+          key={title}
+          title={title}
+          filter={{ name, ...filter }} />
+        ))}
       </main>
     </>
   );

@@ -1,5 +1,5 @@
 ++ create db schema for cards
 ++ create import script
--- list by tiers
+++ list by tiers
 -- add filters
--- fix jsonb based card props
+++ fix jsonb based card props

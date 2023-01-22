@@ -5,20 +5,21 @@ export const cardRouter = createTRPCRouter({
   filter: publicProcedure
     .input(z.object({
       name: z.string().nullable(),
+      hero: z.boolean().default(false),
+      tier: z.number().nullable().default(null),
     }))
     .query(({ ctx, input }) => {
-      const name = input.name;
+      const name = input.name ? {
+        path: ['en_US'],
+        string_contains: input.name,
+      } : undefined;
 
-      if (!name) {
-        return ctx.prisma.card.findMany();
-      }
 
       return ctx.prisma.card.findMany({
         where: {
-          name: {
-            path: ['en_US'],
-            string_contains: name,
-          }
+          name,
+          hero: input.hero,
+          tier: input.tier,
         }
       })
     }),
