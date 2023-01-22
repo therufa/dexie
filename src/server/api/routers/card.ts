@@ -22,7 +22,7 @@ export const cardRouter = createTRPCRouter({
           hero: input.hero,
           tier: input.tier,
           minionTypeId: input.minionTypes?.length
-            ? { in: [0, ...input.minionTypes] }
+            ? { in: input.minionTypes }
             : undefined
         }
       })
