@@ -2,7 +2,7 @@ import type { inferRouterOutputs } from "@trpc/server";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { api } from "../utils/api";
 import type { CardRouter } from '../server/api/routers/card';
@@ -63,6 +63,14 @@ const tiers = [
 
 const Home: NextPage = () => {
   const [name, setName] = useState('');
+  const [showHero, setShowHero] = useState(true);
+  const tiersFiltered = useMemo(() => {
+    if (showHero) {
+      return tiers;
+    }
+
+    return tiers.filter((tier) => tier.filter.hero !== true);
+  }, [showHero]);
 
   return (
     <>
@@ -73,7 +81,9 @@ const Home: NextPage = () => {
       </Head>
       <main className="">
         <input value={name} onChange={(e) => setName(e.target.value)} />
-        {tiers.map(({ title, filter }) => (<Section
+        <input checked={showHero} onChange={(e) => setShowHero(e.target.checked)} type="checkbox" />
+
+        {tiersFiltered.map(({ title, filter }) => (<Section
           key={title}
           title={title}
           filter={{ name, ...filter }} />
