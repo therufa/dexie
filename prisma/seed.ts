@@ -4,8 +4,12 @@ import data from './cards.json';
 const prisma = new PrismaClient();
 
 async function main() {
-    const allCards = data.cards.map(card => prisma.card.create({
-        data: {
+    const allCards = data.cards.map(card => prisma.card.upsert({
+        where: {
+            id: card.id
+        },
+        update: {},
+        create: {
             id: card.id,
             collectible: Boolean(card.collectible),
             slug: card.slug,
@@ -36,7 +40,7 @@ async function main() {
         }
     }));
 
-    console.log(`Seeding ${allCards.length} cards...`);
+    console.log(`Seeding cards...`);
     const cardTransaction = await prisma.$transaction(allCards)
     console.log(`Seeded ${cardTransaction.length} cards`);
 }

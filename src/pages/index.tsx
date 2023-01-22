@@ -7,9 +7,14 @@ import { useState } from "react";
 import { api } from "../utils/api";
 import type { CardRouter } from '../server/api/routers/card';
 
-type CardProp = inferRouterOutputs<CardRouter>['filter'][0];
+type LangKey = 'en_US' | 'ja_JP' | 'de_DE' | 'fr_FR' | 'es_ES' | 'it_IT' | 'pt_PT' | 'ru_RU' | 'ko_KR' | 'zh_TW' | 'zh_CN';
+type Cards = inferRouterOutputs<CardRouter>['filter'];
+type Card = Cards[0] & {
+  image: Record<LangKey, string>
+  name: Record<LangKey, string>
+};
 
-const Card = ({ card }: { card: CardProp }) => {
+const Card = ({ card }: { card: Card }) => {
   return (
     <li>
       <Image
@@ -18,15 +23,15 @@ const Card = ({ card }: { card: CardProp }) => {
         width={200}
         height={276.56}
       />
-      <span>{card.slug}</span>
+      <span>{card.name.en_US}</span>
       <span>{card.tier}</span>
     </li>
   );
 }
 
 const Home: NextPage = () => {
-  const [name, setName] = useState("World");
-  const cardQuery = api.card.filter.useQuery({ name });
+  const [name, setName] = useState('');
+  const cardQuery = api.card.filter.useQuery<unknown, Card[]>({ name });
 
   return (
     <>
