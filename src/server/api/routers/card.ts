@@ -1,20 +1,21 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
-import data from '../../cards.json';
 
 export const cardRouter = createTRPCRouter({
-  single: publicProcedure
+  filter: publicProcedure
     .input(z.object({
       name: z.string().nullable()
     }))
-    .query(({ input }) => {
-      const name = input.name || 'World';
-      const cards = data.cards.filter(
-        card => card.name.en_US.toLowerCase()
-          .match(new RegExp(name.toLowerCase()))
-      )
-
-      return cards;
+    .query(({ ctx, input }) => {
+      const name = input.name || 'bacon';
+      return ctx.prisma.card.findMany({
+        where: {
+          slug: {
+            contains: name,
+            mode: 'insensitive'
+          }
+        }
+      })
     }),
   getAll: publicProcedure.query(({ ctx }) => {
     // return ctx.prisma.card.findMany();

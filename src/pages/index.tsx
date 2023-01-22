@@ -7,26 +7,26 @@ import { useState } from "react";
 import { api } from "../utils/api";
 import type { CardRouter } from '../server/api/routers/card';
 
-type CardProp = inferRouterOutputs<CardRouter>['single'][0];
+type CardProp = inferRouterOutputs<CardRouter>['filter'][0];
 
 const Card = ({ card }: { card: CardProp }) => {
   return (
     <li>
       <Image
         src={card.image.en_US}
-        alt={card.text?.en_US ?? ''}
+        alt={card.slug}
         width={200}
         height={276.56}
       />
-      <span>{card.name.en_US}</span>
-      <span>{card.battlegrounds.tier}</span>
+      <span>{card.slug}</span>
+      <span>{card.tier}</span>
     </li>
   );
 }
 
 const Home: NextPage = () => {
   const [name, setName] = useState("World");
-  const cards = api.card.single.useQuery({ name });
+  const cardQuery = api.card.filter.useQuery({ name });
 
   return (
     <>
@@ -38,7 +38,7 @@ const Home: NextPage = () => {
       <main className="">
         <input value={name} onChange={(e) => setName(e.target.value)} />
         <ul className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {cards.data?.map((card) => (<Card key={card.id} card={card} />))}
+          {cardQuery.data?.map((card) => (<Card key={card.id} card={card} />))}
         </ul>
       </main>
     </>
