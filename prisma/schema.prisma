@@ -22,6 +22,7 @@ model Card {
   minionTypeId  Int?
   cardTypeId    Int
   cardSetId     Int
+  keywordIds    Int[]    @default([])
   rarityId      Int?
   artistName    String?
   health        Int

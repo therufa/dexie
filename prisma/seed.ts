@@ -8,7 +8,9 @@ async function main() {
         where: {
             id: card.id
         },
-        update: {},
+        update: {
+            keywordIds: card.keywordIds,
+        },
         create: {
             id: card.id,
             collectible: Boolean(card.collectible),
