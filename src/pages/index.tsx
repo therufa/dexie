@@ -79,10 +79,13 @@ const Home: NextPage = () => {
   const [minionTypes, setMinionTypes] = useState<number[] | undefined>(
     undefined
   );
-  const [selectedKeywords, setSelectedKeywords] = useState<number[]>(undefined);
+  const [selectedKeywords, setSelectedKeywords] = useState<
+    number[] | undefined
+  >(undefined);
 
   function updateMinionTypes(type: number) {
     if (minionTypes?.includes(type)) {
+      if (minionTypes.length === 1) return setMinionTypes(undefined);
       setMinionTypes(minionTypes.filter((t) => t !== type));
     } else {
       setMinionTypes([...(minionTypes ?? []), type]);
@@ -91,6 +94,7 @@ const Home: NextPage = () => {
 
   function updateSelectedKeywords(keyword: number) {
     if (selectedKeywords?.includes(keyword)) {
+      if (selectedKeywords.length === 1) return setSelectedKeywords(undefined);
       setSelectedKeywords(selectedKeywords.filter((k) => k !== keyword));
     } else {
       setSelectedKeywords([...(selectedKeywords ?? []), keyword]);
@@ -151,7 +155,12 @@ const Home: NextPage = () => {
           <Section
             key={title}
             title={title}
-            filter={{ name, ...filter, minionTypes, keywords: selectedKeywords }}
+            filter={{
+              name,
+              ...filter,
+              minionTypes,
+              keywords: selectedKeywords,
+            }}
           />
         ))}
       </main>
