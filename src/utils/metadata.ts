@@ -1,6 +1,5 @@
 
-export const keywords = [
-  { id: 0, slug: "", name: "" },
+export const Keywords = [
   {
     id: 198,
     slug: "avenge",
@@ -148,7 +147,7 @@ export const keywords = [
 ] as const;
 
 export const getKeywordsByIds = (ids: number[]) =>
-  keywords.filter((keyword) => ids.includes(keyword.id));
+  Keywords.filter((keyword) => ids.includes(keyword.id));
 
 
 export const CardTiers = [

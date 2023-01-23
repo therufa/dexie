@@ -6,7 +6,7 @@ import { useState } from "react";
 
 import { api } from "../utils/api";
 import type { CardRouter } from "../server/api/routers/card";
-import { CardTiers, MinionTypes } from "../utils/metadata";
+import { CardTiers, Keywords, MinionTypes } from "../utils/metadata";
 
 type LangKey =
   | "en_US"
@@ -45,6 +45,7 @@ type SectionFilter = {
   hero?: boolean;
   tier?: number;
   minionTypes?: number[];
+  keywords?: number[];
 };
 
 const Section = ({
@@ -78,12 +79,21 @@ const Home: NextPage = () => {
   const [minionTypes, setMinionTypes] = useState<number[] | undefined>(
     undefined
   );
+  const [selectedKeywords, setSelectedKeywords] = useState<number[]>(undefined);
 
   function updateMinionTypes(type: number) {
     if (minionTypes?.includes(type)) {
       setMinionTypes(minionTypes.filter((t) => t !== type));
     } else {
       setMinionTypes([...(minionTypes ?? []), type]);
+    }
+  }
+
+  function updateSelectedKeywords(keyword: number) {
+    if (selectedKeywords?.includes(keyword)) {
+      setSelectedKeywords(selectedKeywords.filter((k) => k !== keyword));
+    } else {
+      setSelectedKeywords([...(selectedKeywords ?? []), keyword]);
     }
   }
 
@@ -96,24 +106,38 @@ const Home: NextPage = () => {
       </Head>
       <main className="">
         <input value={name} onChange={(e) => setName(e.target.value)} />
-        <label>
-          <input
-            checked={showHero}
-            onChange={(e) => setShowHero(e.target.checked)}
-            type="checkbox"
-          />
-          Hero
-        </label>
-        {Object.entries(MinionTypes).map(([key, value]) => (
-          <label key={key}>
+        <div>
+          <label>
             <input
-              checked={minionTypes?.includes(value) ?? false}
-              onChange={() => updateMinionTypes(value)}
+              checked={showHero}
+              onChange={(e) => setShowHero(e.target.checked)}
               type="checkbox"
             />
-            {key}
+            Hero
           </label>
-        ))}
+          {Object.entries(MinionTypes).map(([key, value]) => (
+            <label key={key}>
+              <input
+                checked={minionTypes?.includes(value) ?? false}
+                onChange={() => updateMinionTypes(value)}
+                type="checkbox"
+              />
+              {key}
+            </label>
+          ))}
+        </div>
+        <div>
+          {Keywords.map((keyword) => (
+            <label key={keyword.id}>
+              <input
+                checked={selectedKeywords?.includes(keyword.id) ?? false}
+                onChange={() => updateSelectedKeywords(keyword.id)}
+                type="checkbox"
+              />
+              {keyword.name}
+            </label>
+          ))}
+        </div>
 
         {showHero && (
           <Section
@@ -127,7 +151,7 @@ const Home: NextPage = () => {
           <Section
             key={title}
             title={title}
-            filter={{ name, ...filter, minionTypes }}
+            filter={{ name, ...filter, minionTypes, keywords: selectedKeywords }}
           />
         ))}
       </main>
