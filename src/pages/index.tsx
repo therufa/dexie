@@ -2,10 +2,11 @@ import type { inferRouterOutputs } from "@trpc/server";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { api } from "../utils/api";
 import type { CardRouter } from "../server/api/routers/card";
+import { CardTiers, MinionTypes } from "../utils/metadata";
 
 type LangKey =
   | "en_US"
@@ -71,41 +72,12 @@ const Section = ({
   );
 };
 
-const tiers = [
-  { title: "Hero", filter: { hero: true } },
-  { title: "tier 1", filter: { tier: 1 } },
-  { title: "tier 2", filter: { tier: 2 } },
-  { title: "tier 3", filter: { tier: 3 } },
-  { title: "tier 4", filter: { tier: 4 } },
-  { title: "tier 5", filter: { tier: 5 } },
-  { title: "tier 6", filter: { tier: 6 } },
-];
-
-const MinionTypes = {
-  NoType: 0,
-  Beast: 20,
-  Demon: 15,
-  Dragon: 24,
-  Elemental: 18,
-  Mech: 17,
-  Murloc: 14,
-  Naga: 92,
-  Pirate: 23,
-  Quillboar: 43,
-  Undead: 11,
-} as const;
-
 const Home: NextPage = () => {
   const [name, setName] = useState("");
   const [showHero, setShowHero] = useState(true);
-  const [minionTypes, setMinionTypes] = useState<number[] | undefined>(undefined);
-  const tiersFiltered = useMemo(() => {
-    if (showHero) {
-      return tiers;
-    }
-
-    return tiers.filter((tier) => tier.filter.hero !== true);
-  }, [showHero]);
+  const [minionTypes, setMinionTypes] = useState<number[] | undefined>(
+    undefined
+  );
 
   function updateMinionTypes(type: number) {
     if (minionTypes?.includes(type)) {
@@ -143,7 +115,15 @@ const Home: NextPage = () => {
           </label>
         ))}
 
-        {tiersFiltered.map(({ title, filter }) => (
+        {showHero && (
+          <Section
+            key="Hero"
+            title="Hero"
+            filter={{ name, hero: true, minionTypes }}
+          />
+        )}
+
+        {CardTiers.map(({ title, filter }) => (
           <Section
             key={title}
             title={title}

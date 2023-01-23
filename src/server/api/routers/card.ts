@@ -24,9 +24,6 @@ export const cardRouter = createTRPCRouter({
           minionTypeId: input.minionTypes?.length
             ? { in: input.minionTypes }
             : undefined,
-          OR: input.minionTypes?.length ? [
-            { multiClassIds: { equals: input.minionTypes } },
-          ] : undefined,
         }
       })
     }),
