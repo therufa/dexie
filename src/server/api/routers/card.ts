@@ -36,6 +36,14 @@ export const cardRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.card.findMany();
   }),
-});
+  hello: publicProcedure
+    .input(z.object({
+      name: z.string()
+    }))
+    .query(({ ctx, input }) => {
+      const name = `Hello, ${input.name}!`;
+      return ctx.prisma.$queryRaw<Array<{ name: string }>>`SELECT ${name} AS name`;
+    }),
+  });
 
 export type CardRouter = typeof cardRouter;
