@@ -1,5 +1,4 @@
 import type { inferRouterOutputs } from "@trpc/server";
-import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useState } from "react";
@@ -7,6 +6,7 @@ import { useState } from "react";
 import { api } from "../utils/api";
 import type { CardRouter } from "../server/api/routers/card";
 import { CardTiers, Keywords, MinionTypes } from "../utils/metadata";
+import withLayout from "../components/withLayout";
 
 type LangKey =
   | "en_US"
@@ -64,7 +64,7 @@ const Section = ({
   return (
     <section className="m-2 md:m-5">
       <h2 className="bg-zinc-200 p-2 text-xl uppercase leading-10">{title}</h2>
-      <ul className="grid grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8">
+      <ul className="grid grid-cols-2 gap-4 md:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-7">
         {cardQuery.data?.map((card) => (
           <Card key={card.id} card={card} />
         ))}
@@ -73,9 +73,9 @@ const Section = ({
   );
 };
 
-const Home: NextPage = () => {
+const Home = withLayout(() => {
   const [name, setName] = useState("");
-  const [showHero, setShowHero] = useState(true);
+  const [showHero, setShowHero] = useState(false);
   const [minionTypes, setMinionTypes] = useState<number[] | undefined>(
     undefined
   );
@@ -166,6 +166,6 @@ const Home: NextPage = () => {
       </main>
     </>
   );
-};
+});
 
 export default Home;
